@@ -129,26 +129,79 @@ namespace Lab5
 
         private static void RunQueries(FleetService service)
         {
-            Console.WriteLine("\n1) Авто с 2015 года:");
-            foreach (var c in service.GetCarsFromYear(2022))
+            int minYear = ReadIntWithDefault(
+                "\n1) Минимальный год авто (по умолч. 2022): ",
+                2022);
+            Console.WriteLine($"Авто с {minYear} года:");
+            foreach (var c in service.GetCarsFromYear(minYear))
             {
                 Console.WriteLine(c);
             }
 
-            int dist = service.GetTotalDistanceByBrand("Opel");
-            Console.WriteLine($"\n2) Пробег Opel: {dist} км");
+            string brandDist = ReadStringWithDefault(
+                "\n2) Марка для суммарного пробега " +
+                "(по умолч. Opel): ",
+                "Opel");
+            int dist = service.GetTotalDistanceByBrand(brandDist);
+            Console.WriteLine($"Пробег {brandDist}: {dist} км");
 
-            Console.WriteLine("\n3) Рейсы (стаж >= 8, год >= 2020):");
-            foreach (var line in service.GetTripsByExpAndYear(8, 2020))
+            int minExp = ReadIntWithDefault(
+                "\n3) Мин. стаж водителя (по умолч. 8): ",
+                8);
+            int minTripCarYear = ReadIntWithDefault(
+                "Мин. год выпуска авто (по умолч. 2020): ",
+                2020);
+            Console.WriteLine(
+                $"Рейсы (стаж >= {minExp}, " +
+                $"год >= {minTripCarYear}):");
+            foreach (var line in service.GetTripsByExpAndYear(
+                minExp,
+                minTripCarYear))
             {
                 Console.WriteLine(line);
             }
 
-            int cnt = service.CountTripsByDriverAgeAndBrand(
-                45,
+            int minAge = ReadIntWithDefault(
+                "\n4) Мин. возраст водителя (по умолч. 45): ",
+                45);
+            string brandCnt = ReadStringWithDefault(
+                "Марка авто (по умолч. Opel): ",
                 "Opel");
-            Console.WriteLine($"\n4) Рейсов "+
-            $"(возраст >= 45, Opel): {cnt}");
+            int cnt = service.CountTripsByDriverAgeAndBrand(
+                minAge,
+                brandCnt);
+            Console.WriteLine(
+                $"Рейсов (возраст >= {minAge}, {brandCnt}): {cnt}");
+        }
+
+        private static int ReadIntWithDefault(
+            string prompt,
+            int defaultValue)
+        {
+            Console.Write(prompt);
+            string? input = Console.ReadLine()?.Trim();
+            if (string.IsNullOrEmpty(input))
+            {
+                return defaultValue;
+            }
+
+            if (int.TryParse(input, out int value))
+            {
+                return value;
+            }
+
+            Console.WriteLine(
+                $"Некорректное число, взято {defaultValue}.");
+            return defaultValue;
+        }
+
+        private static string ReadStringWithDefault(
+            string prompt,
+            string defaultValue)
+        {
+            Console.Write(prompt);
+            string? input = Console.ReadLine()?.Trim();
+            return string.IsNullOrEmpty(input) ? defaultValue : input;
         }
     }
 }
