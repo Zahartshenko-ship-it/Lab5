@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using NPOI.SS.UserModel;
 
@@ -11,7 +11,11 @@ namespace Lab5
         private static void Main()
         {
             var reader = new ExcelReader();
-            IWorkbook workbook = reader.OpenWorkbook(FilePath);
+            IWorkbook? workbook = reader.OpenWorkbook(FilePath);
+            if (workbook == null)
+            {
+                return;
+            }
 
             List<Car> cars = reader.ReadCars(workbook);
             List<Driver> drivers = reader.ReadDrivers(workbook);
